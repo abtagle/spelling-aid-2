@@ -71,7 +71,7 @@ public class WelcomeScreen implements ActionListener{
 	
 	protected void buttons(GridBagConstraints c, Container pane){
 		JButton newQuiz = new JButton("New Quiz");
-		newQuiz.addActionListener(this);
+		newQuiz.addActionListener(new NewQuiz("wordlist"));
 		setButtonConstraints(c, 1, 0);
 		newQuiz.setPreferredSize(BUTTON_DIMENSIONS);
 		pane.add(newQuiz, c);
