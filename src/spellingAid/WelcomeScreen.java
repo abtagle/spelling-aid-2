@@ -17,13 +17,21 @@ public class WelcomeScreen implements ActionListener{
 	final static boolean shouldWeightX = true;
 	final static Dimension BUTTON_DIMENSIONS = new Dimension(250,40);
 	final static int WEIGHT = 1;
+	private JButton _newQuiz;
+	private JButton _review;
+	private JButton _viewStats;
+	private JButton _clearStats;
+	private JButton _quit;
+	
+	private Lists _allLists = null;
 
-	public WelcomeScreen (Container pane){
+	public WelcomeScreen (Container pane, Lists lists){
 		addComponentsToPane(pane);
+		
+		_allLists = lists;
 	}
 	
 	public void addComponentsToPane(Container pane) {
-
 		pane.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		if (shouldFill) {
@@ -42,11 +50,12 @@ public class WelcomeScreen implements ActionListener{
 		
 		
 	}
-	private void setButtonConstraints(GridBagConstraints c, int x, int y){
+	private void setButtonConstraints(JButton button, GridBagConstraints c, int x, int y, Container pane){
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = WEIGHT;
 		c.gridx = x;
 		c.gridy = y;
+		pane.add(button, c);
 	}
 
 
@@ -57,7 +66,7 @@ public class WelcomeScreen implements ActionListener{
 	 */
 
 	
-	private static void welcomeMessage(GridBagConstraints c, Container pane){
+	private void welcomeMessage(GridBagConstraints c, Container pane){
 		JLabel welcomeText = new JLabel();
 		welcomeText.setText("Welcome to the Spelling Aid\n");
 		welcomeText.setHorizontalAlignment(JLabel.CENTER);
@@ -72,35 +81,31 @@ public class WelcomeScreen implements ActionListener{
 	}
 	
 	protected void buttons(GridBagConstraints c, Container pane){
-		JButton newQuiz = new JButton("New Quiz");
-		setButtonConstraints(c, 1, 0);
-		newQuiz.setPreferredSize(BUTTON_DIMENSIONS);
-		pane.add(newQuiz, c);
+		_newQuiz = new JButton("New Quiz");
+		setButtonConstraints(_newQuiz, c, 1, 0, pane);
+		
 
-		JButton review = new JButton("Review Mistakes");
-		setButtonConstraints(c, 1, 1);
-		review.setPreferredSize(BUTTON_DIMENSIONS);
-		pane.add(review, c);
+		_review = new JButton("Review Mistakes");
+		setButtonConstraints(_review, c, 1, 1, pane);
+		pane.add(_review, c);
 
-		JButton viewStats = new JButton("View Statistics");
-		setButtonConstraints(c, 1, 2);
-		viewStats.setPreferredSize(BUTTON_DIMENSIONS);
-		pane.add(viewStats, c);
+		_viewStats = new JButton("View Statistics");
+		setButtonConstraints(_viewStats, c, 1, 2, pane);
 
-		JButton clearStats = new JButton("Clear Statistics");
-		setButtonConstraints(c, 1, 3);
-		clearStats.setPreferredSize(BUTTON_DIMENSIONS);
-		pane.add(clearStats, c);
+		_clearStats = new JButton("Clear Statistics");
+		setButtonConstraints(_clearStats, c, 1, 3, pane);
 
-		JButton quit = new JButton("Quit");
-		setButtonConstraints(c, 1, 4);
-		quit.setPreferredSize(BUTTON_DIMENSIONS);
-		pane.add(quit, c);
+		_quit = new JButton("Quit");
+		setButtonConstraints(_quit, c, 1, 4, pane);
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
+	public void actionPerformed(ActionEvent event) {
+		if(event.getSource() == _newQuiz){
+			new NewQuiz(_allLists.getWordList());
+		} else if (event.getSource() == _review){
+			
+		}
 		
 	}
 
