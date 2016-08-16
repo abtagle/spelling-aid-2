@@ -1,10 +1,35 @@
 package spellingAid;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class GUI {
+		public static final String WORDLIST = "wordlist";
+		
+		public static void main(String[] args) {
+			//Schedule a job for the event-dispatching thread:
+			//creating and showing this application's GUI.		
+
+			
+			try{
+				BufferedReader fRead = new BufferedReader(new FileReader(WORDLIST));
+				//while(fRead.readLine())
+				javax.swing.SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						new GUI();
+					}
+				});
+				
+			} catch (FileNotFoundException e){
+				JOptionPane.showMessageDialog(null, "Error: unable to load word list.");
+				
+			}
+		}
+	
 	public GUI(){
 		createAndShowWelcomeScreen();
 		fileSetup();

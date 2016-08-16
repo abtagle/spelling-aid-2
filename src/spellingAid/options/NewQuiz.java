@@ -1,18 +1,18 @@
-package spellingAid;
+package spellingAid.options;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.InputStream;
+
+import spellingAid.WordList;
 
 public class NewQuiz extends Quiz implements ActionListener {
-	public NewQuiz(String wordlist) {
+	public NewQuiz(WordList wordlist) {
 		super(wordlist);
 		setName("New Quiz");
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		startQuiz();
+		
 		
 	}
 

@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+
+import spellingAid.options.NewQuiz;
 public class WelcomeScreen implements ActionListener{
 
 	//GridBagLayout structure from Oracle https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/GridBagLayoutDemoProject/src/layout/GridBagLayoutDemo.java
@@ -71,7 +73,6 @@ public class WelcomeScreen implements ActionListener{
 	
 	protected void buttons(GridBagConstraints c, Container pane){
 		JButton newQuiz = new JButton("New Quiz");
-		newQuiz.addActionListener(new NewQuiz("wordlist"));
 		setButtonConstraints(c, 1, 0);
 		newQuiz.setPreferredSize(BUTTON_DIMENSIONS);
 		pane.add(newQuiz, c);
