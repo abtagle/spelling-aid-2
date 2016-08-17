@@ -1,6 +1,8 @@
 package spellingAid;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -22,40 +24,30 @@ public class WelcomeScreen implements ActionListener{
 	private JButton _viewStats;
 	private JButton _clearStats;
 	private JButton _quit;
-	
-	private Lists _allLists = null;
-
-	public WelcomeScreen (Container pane, Lists lists){
-		addComponentsToPane(pane);
-		
-		_allLists = lists;
+	public WelcomeScreen (){
+		addComponentsToPane();
 	}
 	
-	public void addComponentsToPane(Container pane) {
-		pane.setLayout(new GridBagLayout());
+	private void addComponentsToPane() {
+		GUI.getInstance().getContentPane().setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		if (shouldFill) {
 			//natural height, maximum width
 			c.fill = GridBagConstraints.HORIZONTAL;
 		}
-
-		
 		if (shouldWeightX) {
 			c.weightx = 0.5;
 		}
-		
-		welcomeMessage(c, pane);
-		buttons(c, pane);
-		
-		
-		
+		welcomeMessage(c);
+		buttons(c);
 	}
-	private void setButtonConstraints(JButton button, GridBagConstraints c, int x, int y, Container pane){
+	private void setButtonConstraints(JButton button, GridBagConstraints c, int x, int y){
+		button.addActionListener(this);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = WEIGHT;
 		c.gridx = x;
 		c.gridy = y;
-		pane.add(button, c);
+		GUI.getInstance().getContentPane().add(button, c);
 	}
 
 
@@ -66,9 +58,9 @@ public class WelcomeScreen implements ActionListener{
 	 */
 
 	
-	private void welcomeMessage(GridBagConstraints c, Container pane){
+	private void welcomeMessage(GridBagConstraints c){
 		JLabel welcomeText = new JLabel();
-		welcomeText.setText("Welcome to the Spelling Aid\n");
+		welcomeText.setText("Welcome to the Spelling Aid!");
 		welcomeText.setHorizontalAlignment(JLabel.CENTER);
 		welcomeText.setVerticalAlignment(JLabel.CENTER);
 		c.gridheight = 1;
@@ -76,34 +68,39 @@ public class WelcomeScreen implements ActionListener{
 		c.ipady = 50;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 0;
-		pane.add(welcomeText, c);
+		c.gridy = 2;
+		GUI.getInstance().getContentPane().add(welcomeText, c);
 	}
 	
-	protected void buttons(GridBagConstraints c, Container pane){
+	private void buttons(GridBagConstraints c){
 		_newQuiz = new JButton("New Quiz");
-		setButtonConstraints(_newQuiz, c, 1, 0, pane);
+		setButtonConstraints(_newQuiz, c, 1, 0);
 		
 
 		_review = new JButton("Review Mistakes");
-		setButtonConstraints(_review, c, 1, 1, pane);
-		pane.add(_review, c);
+		setButtonConstraints(_review, c, 1, 1);
 
 		_viewStats = new JButton("View Statistics");
-		setButtonConstraints(_viewStats, c, 1, 2, pane);
+		setButtonConstraints(_viewStats, c, 1, 2);
 
 		_clearStats = new JButton("Clear Statistics");
-		setButtonConstraints(_clearStats, c, 1, 3, pane);
+		setButtonConstraints(_clearStats, c, 1, 3);
 
 		_quit = new JButton("Quit");
-		setButtonConstraints(_quit, c, 1, 4, pane);
+		setButtonConstraints(_quit, c, 1, 4);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		if(event.getSource() == _newQuiz){
-			new NewQuiz(_allLists.getWordList());
+		if((JButton)event.getSource() == _newQuiz){
+			new NewQuiz(Lists.getInstance().getWordList(), "New Quiz");
 		} else if (event.getSource() == _review){
+			
+		} else if (event.getSource() == _viewStats){
+			
+		} else if (event.getSource() == _clearStats){
+			
+		} else if (event.getSource() == _quit){
 			
 		}
 		

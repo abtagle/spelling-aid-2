@@ -29,7 +29,7 @@ public class Lists {
 		_failed = readInFile(FAILED);
 		_lastFailed = readInFile(LAST_FAILED);
 	}
-	protected static Lists setLists(){
+	protected static Lists getInstance(){
 		if (_thisList == null){
 			return new Lists();
 		} else{
@@ -57,6 +57,7 @@ public class Lists {
 		}
 		return words;
 	}
+	
 	public WordList getWordList(){
 		return _wordList;
 	}
