@@ -29,7 +29,7 @@ public class Lists {
 		_failed = readInFile(FAILED);
 		_lastFailed = readInFile(LAST_FAILED);
 	}
-	protected static Lists getInstance(){
+	public static Lists getInstance(){
 		if (_thisList == null){
 			return new Lists();
 		} else{

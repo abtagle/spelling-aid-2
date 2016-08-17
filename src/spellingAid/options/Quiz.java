@@ -12,6 +12,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
 import spellingAid.GUI;
+import spellingAid.Lists;
 import spellingAid.WordList;
 
 public abstract class Quiz implements ActionListener{
@@ -23,16 +24,18 @@ public abstract class Quiz implements ActionListener{
 	private JButton _submit = null;
 	private JLabel _correct = null;
 	private String _spelling = null;
-			
+	private int _wordNumberInt;
+
 	public Quiz(WordList wordlist, String name){
 		_name = name;
-		GUI.getInstance().getContentPane().removeAll();
 		_wordlist = wordlist.returnTestlist();
+		_wordNumberInt = 1;
 		addComponentsToPane();
-		startQuiz();
+		quizQuestion();
 	}
-	
+
 	protected void addComponentsToPane() {
+		GUI.getInstance().getContentPane().removeAll();
 		Container pane = GUI.getInstance().getContentPane();
 		pane.setLayout(new GridLayout(5,0));
 		_title = new JLabel(_name, JLabel.CENTER);
@@ -42,52 +45,72 @@ public abstract class Quiz implements ActionListener{
 		_spellingBar = new JTextField();
 		pane.add(_spellingBar);
 		_submit = new JButton("Check Spelling");
+		_submit.addActionListener(this);
 		pane.add(_submit);
 		_correct = new JLabel("", JLabel.CENTER);
 		pane.add(_correct);
-		GUI.getInstance().getFrame().setVisible(true);;
+		GUI.getInstance().getFrame().setVisible(true);
 	}
-	
+
 	//Acts as template for spelling aloud functionality
-	protected final void startQuiz(){
-		int wordNumber = 1;
-		for(String currentWord : _wordlist){
-			_wordNumber.setText("Spell word " + wordNumber + " of " + _wordlist.size());
-			/*while(_spelling == null){
-				
-			}*/
-			if(_spelling.equals(currentWord)){
+	protected final void quizQuestion(){
+
+		_wordNumber.setText("Spell word " + _wordNumberInt + " of " + _wordlist.size());
+		_wordNumber.repaint();
+		try {
+			SayAnything w = new SayAnything(_wordlist.get(_wordNumberInt-1));
+			w.doInBackground();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			_correct.setText("Error saying word");
+		}
+
+		/*if(_spelling.equals(currentWord)){
 				_wordNumber.setText("Correct");
 			}
-			_spelling = null;
-		}
-		
+		 */
+		_spelling = null;
+
 	}
-	
+
 	//Hook method for spelling aloud implementation
 	protected void spellAloud(String word){
-		
+
 	}
-	@Override
+
 	public void actionPerformed(ActionEvent event) {
 		try{
+			System.out.println("Work");
 			_spelling = _spellingBar.getText();
-		} catch (NullPointerException e){
-			
+			_correct.setText(_spelling);
+			_correct.repaint();
+			if(_spelling.equals(_wordlist.get(_wordNumberInt-1))){
+				new SayAnything("Correct").doInBackground();
+				Lists.getInstance().getMastered().addWord(_wordlist.get(_wordNumberInt-1));
+				_wordNumberInt++;
+			} else{
+				new SayAnything("Incorrect. Please try again.").doInBackground();
+				quizQuestion();
+			}
+
+		} catch (Exception e){
+
 		}
 	}
-	class sayWord extends SwingWorker<Void, Void>{
+	class SayAnything extends SwingWorker<Void, Void>{
 		private String _word = null;
-		public sayWord(String word){
-			_word = word;
+		public SayAnything(String anything){
+			_word = anything;
 		}
 
 		@Override
 		protected Void doInBackground() throws Exception {
-			ProcessBuilder sayWordBuilder = new ProcessBuilder("/bin/bash", "echo", _word, "|", "festival", "--tts");
-			Process sayWord = sayWordBuilder.start();
+			String sayCommand = "echo " + _word + " | festival --tts;";
+			ProcessBuilder sayBuilder = new ProcessBuilder("/bin/bash", "-c", sayCommand);
+			Process say = sayBuilder.start();
 			return null;
 		}
-		
+
 	}
 }
