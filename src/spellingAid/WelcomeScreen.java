@@ -73,7 +73,6 @@ public class WelcomeScreen implements ActionListener{
 		c.gridx = 0;
 		c.gridy = 2;
 		GUI.getInstance().getContentPane().add(select, c);
-		
 		c.gridx = 0;
 		c.gridy = 0;
 		spellingAid.setFont(GUI.TITLE_FONT);

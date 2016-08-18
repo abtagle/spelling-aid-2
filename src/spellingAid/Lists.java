@@ -1,12 +1,9 @@
 package spellingAid;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +24,7 @@ public class Lists {
 	private WordList _failed;
 	private WordList _lastFailed;
 	private static Lists _thisList = null;
-	
+
 	private Lists(){
 		_thisList = this;
 		_wordList = readInFile(WORDLIST);
@@ -51,7 +48,9 @@ public class Lists {
 				BufferedReader wordListRead = new BufferedReader(new FileReader(wordList));
 				String word;
 				while((word = wordListRead.readLine()) != null){
-					words.addWord(word);
+					if((word.equals("") == false && (word.equals("\\s+") == false))){
+						words.addWord(word);
+					}
 				}
 				wordListRead.close();	
 				Collections.sort(words.returnArrayList(), String.CASE_INSENSITIVE_ORDER);
@@ -65,7 +64,7 @@ public class Lists {
 		}
 		return words;
 	}
-	
+
 	public WordList getWordList(){
 		return _wordList;
 	}
@@ -105,7 +104,7 @@ public class Lists {
 			writer.println(i);
 		}
 		writer.close();
-		
+
 	}
-	
+
 }

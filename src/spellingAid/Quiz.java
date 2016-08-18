@@ -33,7 +33,6 @@ public abstract class Quiz{
 	}
 
 	protected void addComponentsToPane() {
-		GUI.getInstance().getFrame().setVisible(false);
 		GUI.getInstance().getContentPane().removeAll();
 		Container pane = GUI.getInstance().getContentPane();
 		pane.setLayout(new GridLayout(5,0));
@@ -44,28 +43,30 @@ public abstract class Quiz{
 		_wordNumber = new JLabel("", JLabel.CENTER);
 		pane.add(_wordNumber);
 		_spellingBar = new JTextField();
+		_spellingBar.setText("Spell words here");
 		pane.add(_spellingBar);
+		_correct = new JLabel();
 		_submit = new JButton("Check Spelling");
+		GUI.getInstance().getFrame().getRootPane().setDefaultButton(_submit);
 		pane.add(_submit);
-		GUI.getInstance().getFrame().setVisible(true);
+		GUI.getInstance().getFrame().repaint();
 		_submit.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent event) {
 
 			try{
-				if( _spellingBar.getText().equals("") == false){
-					String spelling = _spellingBar.getText();
+				if( _spellingBar.getText().trim().equals("") == false){
+					String spelling = _spellingBar.getText().trim();
 					if(_attemptNumber == 1){
 						if(spelling.toLowerCase().equals(_wordlist.get(_wordNumberInt-1).toLowerCase())){
-							new SayAnything("Correct").doInBackground();
 							Lists.getInstance().getMastered().addWord(_wordlist.get(_wordNumberInt-1));
 							if(Lists.getInstance().getLastFailed().contains(_wordlist.get(_wordNumberInt-1))){
 								Lists.getInstance().getLastFailed().remove(_wordlist.get(_wordNumberInt-1));
 							}
-							_wordNumberInt++;	
+							_wordNumberInt++;
+							new SayAnything("Correct").doInBackground();
 						} else{
-							new SayAnything("Incorrect. Please try again.").doInBackground();
 							_attemptNumber++;
+							new SayAnything("Incorrect. Please try again.").doInBackground();
 						}
-						_spellingBar.setText("");
 						quizQuestion();
 					} else{
 						if(spelling.toLowerCase().equals(_wordlist.get(_wordNumberInt-1).toLowerCase())){
@@ -77,14 +78,13 @@ public abstract class Quiz{
 						} else{
 							new SayAnything("Incorrect.").doInBackground();
 							Lists.getInstance().getFailed().addWord(_wordlist.get(_wordNumberInt-1));
-							if(Lists.getInstance().getLastFailed().contains(_wordlist.get(_wordNumberInt-1))){
+							if(Lists.getInstance().getLastFailed().contains(_wordlist.get(_wordNumberInt-1))==false){
 								Lists.getInstance().getLastFailed().addWord(_wordlist.get(_wordNumberInt-1));
 							}
 							spellAloud(_wordlist.get(_wordNumberInt-1));
 						}
 						_attemptNumber = 1;
 						_wordNumberInt++;
-						_spellingBar.setText("");
 						quizQuestion();
 					}
 				}
@@ -93,21 +93,22 @@ public abstract class Quiz{
 
 			}
 		}
-
 		});
 
 	}
 
 	//Acts as template for spelling aloud functionality
 	protected final void quizQuestion(){
-
+		_spellingBar.setText("");
 		if(_wordNumberInt <=_wordlist.size()){
-			_wordNumber.setText("Spell word " + _wordNumberInt + " of " + _wordlist.size() + " in the box below");
+			_wordNumber.setText("Spell word " + _wordNumberInt + " of " + _wordlist.size());
 			_wordNumber.repaint();
 			try {
 				SayAnything w = new SayAnything(_wordlist.get(_wordNumberInt-1));
-				if(_wordNumberInt == 2){
+				if(_attemptNumber == 2){
 					w.doInBackground();
+				} else{
+					_correct.setText("");
 				}
 				w.doInBackground();
 			} catch (Exception e) {
@@ -137,7 +138,9 @@ public abstract class Quiz{
 			String sayCommand = "echo " + _word + "." + " | festival --tts";
 			ProcessBuilder sayBuilder = new ProcessBuilder("/bin/bash", "-c", sayCommand);
 			Process say = sayBuilder.start();
-			say.waitFor();
+			if(_wordNumberInt!=1 || _attemptNumber!=1){
+				say.waitFor();
+			}
 			return null;
 		}
 
