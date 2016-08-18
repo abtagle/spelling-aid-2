@@ -1,63 +1,57 @@
 package spellingAid;
 
+import java.awt.Container;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 public class ViewStats {
-	
-	final static boolean shouldFill = true;
-	final static boolean shouldWeightX = true;
-	final static int COLUMNS = 4;
+	private static final int COLUMNS = 4;
 	private TreeSet<String> _testedWordsSet = null;
+	private JLabel _title =  new JLabel("Statistics");
+	private JScrollPane _stats = null;
+	private JButton _back = new JButton("Back to menu");
 	
 	public ViewStats(){
 		_testedWordsSet = new TreeSet<String>();
 		_testedWordsSet.addAll(Lists.getInstance().getFailed().returnArrayList());
 		_testedWordsSet.addAll(Lists.getInstance().getFaulted().returnArrayList());
-		_testedWordsSet.addAll(Lists.getInstance().getFaulted().returnArrayList());
+		_testedWordsSet.addAll(Lists.getInstance().getMastered().returnArrayList());
 		addComponentsToPane();
 	}
 	private void addComponentsToPane(){
 		GUI.getInstance().getContentPane().setVisible(false);
-		GUI.getInstance().getContentPane().removeAll();
-		GUI.getInstance().getContentPane().setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		if (shouldFill) {
-			//natural height, maximum width
-			c.fill = GridBagConstraints.HORIZONTAL;
-		}
-		if (shouldWeightX) {
-			c.weightx = 0.5;
-		}
-		title();
-		table();
-		button();
-		GUI.getInstance().getContentPane().setVisible(true);
+		Container pane = GUI.getInstance().getContentPane();
+		pane.removeAll();
+		pane.setLayout(new BorderLayout());
+		_title.setFont(GUI.TITLE_FONT);
+		_title.setHorizontalAlignment(JLabel.CENTER);
+		pane.add(_title, BorderLayout.NORTH);	
+		_back.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event) {
+				GUI.getInstance().getFrame().setVisible(false);
+				GUI.getInstance().getContentPane().removeAll();
+				new WelcomeScreen();
+			}
+		});
+        pane.add(_back, BorderLayout.AFTER_LAST_LINE);
+        JTable statsTable = table();
+        _stats = new JScrollPane(statsTable);
+        pane.add(_stats, BorderLayout.CENTER);
+        GUI.getInstance().getContentPane().setVisible(true);
 	}
-	private void title(){
-		GridBagConstraints c = new GridBagConstraints();
-		JLabel welcomeText = new JLabel();
-		welcomeText.setText("Statistics");
-		welcomeText.setFont(GUI.TITLE_FONT);
-		welcomeText.setHorizontalAlignment(JLabel.CENTER);
-		welcomeText.setVerticalAlignment(JLabel.CENTER);
-		c.gridheight = 1;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.ipadx = 50;
-		c.gridx = 0;
-		c.gridy = 0;
-		GUI.getInstance().getContentPane().add(welcomeText, c);
-	}
-	private void table(){
+	private JTable table(){
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridheight = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -81,23 +75,6 @@ public class ViewStats {
 				return false;
 			}
 		};
-		GUI.getInstance().getContentPane().add(statisticsTable, c);
-	}
-	private void button(){
-		GridBagConstraints c = new GridBagConstraints();
-		JButton returnHome = new JButton("Return Home");
-		c.gridheight = 1;
-		c.ipadx = 10;
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 2;
-		GUI.getInstance().getContentPane().add(returnHome, c);
-		returnHome.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent event) {
-				GUI.getInstance().getFrame().setVisible(false);
-				GUI.getInstance().getContentPane().removeAll();
-				new WelcomeScreen();
-			}
-		});
+		return statisticsTable;
 	}
 }

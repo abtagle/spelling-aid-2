@@ -7,8 +7,8 @@ public class NewQuiz extends Quiz {
 
 	@Override
 	protected void spellAloud(String word) {
-		// TODO Auto-generated method stub
-		
+		_wordNumberInt++;
+		_attemptNumber = 1;
 	}
 
 }
