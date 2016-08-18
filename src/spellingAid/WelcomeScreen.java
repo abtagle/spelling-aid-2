@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 import spellingAid.options.NewQuiz;
 public class WelcomeScreen implements ActionListener{
@@ -23,11 +24,11 @@ public class WelcomeScreen implements ActionListener{
 	private JButton _review;
 	private JButton _viewStats;
 	private JButton _clearStats;
-	private JButton _quit;
 	public WelcomeScreen (){
+		GUI.getInstance().getContentPane().removeAll();
 		addComponentsToPane();
 	}
-	
+
 	private void addComponentsToPane() {
 		GUI.getInstance().getContentPane().setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -57,7 +58,7 @@ public class WelcomeScreen implements ActionListener{
 	 * event-dispatching thread.
 	 */
 
-	
+
 	private void welcomeMessage(GridBagConstraints c){
 		JLabel welcomeText = new JLabel();
 		welcomeText.setText("Welcome to the Spelling Aid!");
@@ -68,14 +69,14 @@ public class WelcomeScreen implements ActionListener{
 		c.ipady = 50;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 1;
 		GUI.getInstance().getContentPane().add(welcomeText, c);
 	}
-	
+
 	private void buttons(GridBagConstraints c){
 		_newQuiz = new JButton("New Quiz");
 		setButtonConstraints(_newQuiz, c, 1, 0);
-		
+
 
 		_review = new JButton("Review Mistakes");
 		setButtonConstraints(_review, c, 1, 1);
@@ -85,9 +86,6 @@ public class WelcomeScreen implements ActionListener{
 
 		_clearStats = new JButton("Clear Statistics");
 		setButtonConstraints(_clearStats, c, 1, 3);
-
-		_quit = new JButton("Quit");
-		setButtonConstraints(_quit, c, 1, 4);
 	}
 
 	@Override
@@ -95,15 +93,16 @@ public class WelcomeScreen implements ActionListener{
 		if((JButton)event.getSource() == _newQuiz){
 			new NewQuiz(Lists.getInstance().getWordList(), "New Quiz");
 		} else if (event.getSource() == _review){
-			
+			if(Lists.getInstance().getLastFailed().length() == 0){
+				JOptionPane.showMessageDialog(null, "There are no words available to review. Please try starting a new quiz.");
+			} else{
+				new NewQuiz(Lists.getInstance().getLastFailed(), "Review");
+			}
 		} else if (event.getSource() == _viewStats){
-			
+
 		} else if (event.getSource() == _clearStats){
-			
-		} else if (event.getSource() == _quit){
-			
+
 		}
-		
 	}
 
 }

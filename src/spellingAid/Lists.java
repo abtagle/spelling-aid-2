@@ -1,10 +1,17 @@
 package spellingAid;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
@@ -46,7 +53,8 @@ public class Lists {
 				while((word = wordListRead.readLine()) != null){
 					words.addWord(word);
 				}
-				wordListRead.close();		
+				wordListRead.close();	
+				Collections.sort(words.returnArrayList(), String.CASE_INSENSITIVE_ORDER);
 
 			} catch (FileNotFoundException e){
 				JOptionPane.showMessageDialog(null, "Error: unable to load " + filename + ".");
@@ -73,4 +81,31 @@ public class Lists {
 	public WordList getLastFailed(){
 		return _lastFailed;
 	}
+	public void clearStats(){
+		_mastered = new WordList();
+		_faulted = new WordList();
+		_failed = new WordList();
+		_lastFailed = new WordList();
+	}
+	public void writeAllStats(){
+		try {
+			writeListToFiles(_mastered.returnArrayList(), MASTERED);
+			writeListToFiles(_faulted.returnArrayList(), FAULTED);
+			writeListToFiles(_failed.returnArrayList(), FAILED);
+			writeListToFiles(_lastFailed.returnArrayList(), LAST_FAILED);
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private void writeListToFiles(ArrayList<String> list, String filename) throws FileNotFoundException, UnsupportedEncodingException{
+		//From: http://stackoverflow.com/questions/2885173/how-to-create-a-file-and-write-to-a-file-in-java
+		PrintWriter writer = new PrintWriter(filename);
+		for(String i : list){
+			writer.println(i);
+		}
+		writer.close();
+		
+	}
+	
 }

@@ -13,23 +13,25 @@ import javax.swing.SwingWorker;
 
 import spellingAid.GUI;
 import spellingAid.Lists;
+import spellingAid.WelcomeScreen;
 import spellingAid.WordList;
 
-public abstract class Quiz implements ActionListener{
-	private String _name;
-	private ArrayList<String> _wordlist = null;
-	private JLabel _wordNumber = null;
-	private JLabel _title = null;
-	private JTextField _spellingBar = null;
-	private JButton _submit = null;
-	private JLabel _correct = null;
-	private String _spelling = null;
-	private int _wordNumberInt;
+public abstract class Quiz{
+	protected String _name;
+	protected ArrayList<String> _wordlist = null;
+	protected JLabel _wordNumber = null;
+	protected JLabel _title = null;
+	protected JTextField _spellingBar = null;
+	protected JButton _submit = null;
+	protected JLabel _correct = null;
+	protected int _attemptNumber;
+	protected int _wordNumberInt;
 
 	public Quiz(WordList wordlist, String name){
 		_name = name;
 		_wordlist = wordlist.returnTestlist();
 		_wordNumberInt = 1;
+		_attemptNumber = 1;
 		addComponentsToPane();
 		quizQuestion();
 	}
@@ -44,60 +46,77 @@ public abstract class Quiz implements ActionListener{
 		pane.add(_wordNumber);
 		_spellingBar = new JTextField();
 		pane.add(_spellingBar);
-		_submit = new JButton("Check Spelling");
-		_submit.addActionListener(this);
-		pane.add(_submit);
 		_correct = new JLabel("", JLabel.CENTER);
 		pane.add(_correct);
 		GUI.getInstance().getFrame().setVisible(true);
+		_submit = new JButton("Check Spelling");
+		pane.add(_submit);
+		_submit.addActionListener(new ActionListener(){public void actionPerformed(ActionEvent event) {
+			try{
+				String spelling = _spellingBar.getText();
+				if(_attemptNumber == 1){
+					if(spelling.toLowerCase().equals(_wordlist.get(_wordNumberInt-1).toLowerCase())){
+						new SayAnything("Correct").doInBackground();
+						Lists.getInstance().getMastered().addWord(_wordlist.get(_wordNumberInt-1));
+						if(Lists.getInstance().getLastFailed().contains(_wordlist.get(_wordNumberInt-1))){
+							Lists.getInstance().getLastFailed().remove(_wordlist.get(_wordNumberInt-1));
+						}
+						_wordNumberInt++;	
+						Thread.sleep(1000);
+					} else{
+						new SayAnything("Incorrect. Please try again.").doInBackground();
+						_attemptNumber++;
+						Thread.sleep(4000);
+					}
+					quizQuestion();
+				} else{
+					if(spelling.toLowerCase().equals(_wordlist.get(_wordNumberInt-1).toLowerCase())){
+						new SayAnything("Correct").doInBackground();
+						Lists.getInstance().getFaulted().addWord(_wordlist.get(_wordNumberInt-1));
+						if(Lists.getInstance().getLastFailed().contains(_wordlist.get(_wordNumberInt-1))){
+							Lists.getInstance().getLastFailed().remove(_wordlist.get(_wordNumberInt-1));
+						}
+					} else{
+						new SayAnything("Incorrect.").doInBackground();
+						Lists.getInstance().getFailed().addWord(_wordlist.get(_wordNumberInt-1));
+						spellAloud(_wordlist.get(_wordNumberInt-1));
+					}
+					_attemptNumber = 1;
+					_wordNumberInt++;
+					Thread.sleep(1000);
+					quizQuestion();
+				}
+
+			} catch (Exception e){
+
+			}
+		}
+
+		});
+
 	}
 
 	//Acts as template for spelling aloud functionality
 	protected final void quizQuestion(){
 
-		_wordNumber.setText("Spell word " + _wordNumberInt + " of " + _wordlist.size());
-		_wordNumber.repaint();
-		try {
-			SayAnything w = new SayAnything(_wordlist.get(_wordNumberInt-1));
-			w.doInBackground();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			_correct.setText("Error saying word");
-		}
-
-		/*if(_spelling.equals(currentWord)){
-				_wordNumber.setText("Correct");
+		if(_wordNumberInt <=_wordlist.size()){
+			_wordNumber.setText("Spell word " + _wordNumberInt + " of " + _wordlist.size());
+			_wordNumber.repaint();
+			try {
+				SayAnything w = new SayAnything(_wordlist.get(_wordNumberInt-1));
+				w.doInBackground();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				_correct.setText("Error saying word");
 			}
-		 */
-		_spelling = null;
-
+		} 
 	}
 
 	//Hook method for spelling aloud implementation
-	protected void spellAloud(String word){
+	protected abstract void spellAloud(String word);
 
-	}
 
-	public void actionPerformed(ActionEvent event) {
-		try{
-			System.out.println("Work");
-			_spelling = _spellingBar.getText();
-			_correct.setText(_spelling);
-			_correct.repaint();
-			if(_spelling.equals(_wordlist.get(_wordNumberInt-1))){
-				new SayAnything("Correct").doInBackground();
-				Lists.getInstance().getMastered().addWord(_wordlist.get(_wordNumberInt-1));
-				_wordNumberInt++;
-			} else{
-				new SayAnything("Incorrect. Please try again.").doInBackground();
-				quizQuestion();
-			}
-
-		} catch (Exception e){
-
-		}
-	}
 	class SayAnything extends SwingWorker<Void, Void>{
 		private String _word = null;
 		public SayAnything(String anything){
@@ -106,7 +125,7 @@ public abstract class Quiz implements ActionListener{
 
 		@Override
 		protected Void doInBackground() throws Exception {
-			String sayCommand = "echo " + _word + " | festival --tts;";
+			String sayCommand = "echo " + _word + " | festival --tts";
 			ProcessBuilder sayBuilder = new ProcessBuilder("/bin/bash", "-c", sayCommand);
 			Process say = sayBuilder.start();
 			return null;

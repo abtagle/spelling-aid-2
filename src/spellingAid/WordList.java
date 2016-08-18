@@ -18,6 +18,7 @@ public class WordList {
 	}
 	
 	public ArrayList<String> returnTestlist(){
+		@SuppressWarnings("unchecked")
 		ArrayList<String> shufWords = (ArrayList<String>) _words.clone();
 		Collections.shuffle(shufWords);
 		ArrayList<String> returnList = new ArrayList();
@@ -27,5 +28,17 @@ public class WordList {
 			i++;
 		}
 		return returnList;
+	}
+	public boolean contains(String word){
+		return _words.contains(word);
+	}
+	public void remove(String word){
+		_words.remove(word);
+	}
+	protected ArrayList<String> returnArrayList(){
+		return _words;
+	}
+	public int length(){
+		return _words.size();
 	}
 }
