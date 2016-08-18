@@ -82,6 +82,7 @@ public abstract class Quiz{
 								}
 								_attemptNumber = 1;
 								_wordNumberInt++;
+								quizQuestion();
 							} else{
 								new SayAnything("Incorrect.").doInBackground();
 								Lists.getInstance().getFailed().addWord(_wordlist.get(_wordNumberInt-1));
@@ -90,7 +91,6 @@ public abstract class Quiz{
 								}
 								spellAloud(_wordlist.get(_wordNumberInt-1));
 							}
-							quizQuestion();
 							//Third attempt for review - no change to word status
 						} else{
 							if(spelling.equals(_wordlist.get(_wordNumberInt-1).toLowerCase())){

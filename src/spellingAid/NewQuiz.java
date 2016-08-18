@@ -9,6 +9,7 @@ public class NewQuiz extends Quiz {
 	protected void spellAloud(String word) {
 		_wordNumberInt++;
 		_attemptNumber = 1;
+		quizQuestion();
 	}
 
 }
