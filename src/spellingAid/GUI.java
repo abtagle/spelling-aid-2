@@ -1,12 +1,16 @@
 package spellingAid;
 
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 public class GUI implements WindowListener{
+	//From: http://stackoverflow.com/questions/7140248/get-system-default-font
+	public static final Font TITLE_FONT = new Font(new JLabel().getName(), 1, 20);
 	private JFrame _frame = null;
 	private static GUI _gui = null;
 	public static void main(String[] args) {
@@ -53,9 +57,7 @@ public class GUI implements WindowListener{
 	}
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		System.out.println("Saving Files");
 		Lists.getInstance().writeAllStats();
-		
 	}
 	@Override
 	public void windowDeactivated(WindowEvent arg0) {
@@ -79,7 +81,6 @@ public class GUI implements WindowListener{
 	}
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 		

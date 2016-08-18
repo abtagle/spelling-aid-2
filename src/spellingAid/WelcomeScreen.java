@@ -9,8 +9,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import spellingAid.options.NewQuiz;
 public class WelcomeScreen implements ActionListener{
 
 	//GridBagLayout structure from Oracle https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/GridBagLayoutDemoProject/src/layout/GridBagLayoutDemo.java
@@ -25,8 +23,8 @@ public class WelcomeScreen implements ActionListener{
 	private JButton _viewStats;
 	private JButton _clearStats;
 	public WelcomeScreen (){
-		GUI.getInstance().getContentPane().removeAll();
 		addComponentsToPane();
+		GUI.getInstance().getFrame().setVisible(true);
 	}
 
 	private void addComponentsToPane() {
@@ -60,17 +58,26 @@ public class WelcomeScreen implements ActionListener{
 
 
 	private void welcomeMessage(GridBagConstraints c){
-		JLabel welcomeText = new JLabel();
-		welcomeText.setText("Welcome to the Spelling Aid!");
-		welcomeText.setHorizontalAlignment(JLabel.CENTER);
-		welcomeText.setVerticalAlignment(JLabel.CENTER);
-		c.gridheight = 1;
 		c.ipadx = 50;
 		c.ipady = 50;
+		
 		c.fill = GridBagConstraints.HORIZONTAL;
+		JLabel spellingAid = createJLabel("Spelling Aid");
+		
+		JLabel welcome = createJLabel("Welcome!");
 		c.gridx = 0;
 		c.gridy = 1;
-		GUI.getInstance().getContentPane().add(welcomeText, c);
+		GUI.getInstance().getContentPane().add(welcome, c);
+		
+		JLabel select = createJLabel("Please select an option.");
+		c.gridx = 0;
+		c.gridy = 2;
+		GUI.getInstance().getContentPane().add(select, c);
+		
+		c.gridx = 0;
+		c.gridy = 0;
+		spellingAid.setFont(GUI.TITLE_FONT);
+		GUI.getInstance().getContentPane().add(spellingAid, c);
 	}
 
 	private void buttons(GridBagConstraints c){
@@ -94,16 +101,28 @@ public class WelcomeScreen implements ActionListener{
 			new NewQuiz(Lists.getInstance().getWordList(), "New Quiz");
 		} else if (event.getSource() == _review){
 			if(Lists.getInstance().getLastFailed().length() == 0){
-				JOptionPane.showMessageDialog(null, "There are no words available to review. Please try starting a new quiz.");
+				JOptionPane.showMessageDialog(null, "There are no words available to review. Please try starting a new quiz.", "Review", JOptionPane.ERROR_MESSAGE);
 			} else{
-				new NewQuiz(Lists.getInstance().getLastFailed(), "Review");
+				new Review(Lists.getInstance().getLastFailed(), "Review");
 			}
 		} else if (event.getSource() == _viewStats){
+			new ViewStats();
 
 		} else if (event.getSource() == _clearStats){
-
+			new ClearStats();
 		}
 	}
-
+	/**
+	 * creates JLabel including all formatting
+	 * @param text
+	 * @return
+	 */
+	private JLabel createJLabel(String text){
+		JLabel label = new JLabel();
+		label.setText(text);
+		label.setHorizontalAlignment(JLabel.CENTER);
+		label.setVerticalAlignment(JLabel.CENTER);
+		return label;
+	}
 }
 

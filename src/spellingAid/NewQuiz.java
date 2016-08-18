@@ -1,6 +1,4 @@
-package spellingAid.options;
-
-import spellingAid.WordList;
+package spellingAid;
 
 public class NewQuiz extends Quiz {
 	public NewQuiz(WordList wordlist, String name) {
