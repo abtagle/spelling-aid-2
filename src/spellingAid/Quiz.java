@@ -152,8 +152,10 @@ public abstract class Quiz{
 	protected abstract void spellAloud(String word);
 
 	//Says words in background (unnecessary SwingWorker, but implemented before I realised timing issues with festival
+	//Hopefully can find a way to adapt this
 	class SayAnything extends SwingWorker<Void, Void>{
 		private String _word = null;
+		private Process _process;
 		public SayAnything(String anything){
 			_word = anything;
 		}
@@ -162,9 +164,12 @@ public abstract class Quiz{
 		protected Void doInBackground() throws Exception {
 			String sayCommand = "echo " + _word + "." + " | festival --tts";
 			ProcessBuilder sayBuilder = new ProcessBuilder("/bin/bash", "-c", sayCommand);
-			Process say = sayBuilder.start();
+			_process = sayBuilder.start();
 			if(_wordNumberInt!=1 || _attemptNumber!=1){
-				say.waitFor();
+				try {
+					_process.waitFor();
+				} catch (InterruptedException e) {
+				}
 			}
 			return null;
 		}

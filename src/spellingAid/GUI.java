@@ -5,18 +5,36 @@ import java.awt.Font;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * Assignment 2 for Softeng 206- creating a GUI spelling aid
+ * 
+ * @author atag549
+ * Modified 20/08/16
+ *
+ */
+
+//Must also be able to tell when the window is closing to save everything from the GUI
 public class GUI implements WindowListener{
 	//From: http://stackoverflow.com/questions/7140248/get-system-default-font
 	public static final Font TITLE_FONT = new Font(new JLabel().getName(), 1, 20);
 	private JFrame _frame = null;
 	private static GUI _gui = null;
 	public static void main(String[] args) {
-		//Schedule a job for the event-dispatching thread:
-		//creating and showing this application's GUI.		
-		
+		JOptionPane.showMessageDialog(null, "Please select a file to read words from", "Select a wordlist", JOptionPane.INFORMATION_MESSAGE);
+	    //From: https://docs.oracle.com/javase/7/docs/api/javax/swing/JFileChooser.html
+		JFileChooser chooser = new JFileChooser();
+	    int returnVal = chooser.showOpenDialog(null);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	            Lists.getInstance().setWordList(chooser.getSelectedFile());
+	    }
+	    //Schedule a job for the event-dispatching thread:
+		//creating and showing this application's GUI.	
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				GUI.getInstance().createAndShowWelcomeScreen();

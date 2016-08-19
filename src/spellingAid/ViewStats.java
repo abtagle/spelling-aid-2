@@ -22,12 +22,14 @@ public class ViewStats {
 	private JButton _back = new JButton("Back to menu");
 	
 	public ViewStats(){
+		//Creates set of all tested words
 		_testedWordsSet = new TreeSet<String>();
 		_testedWordsSet.addAll(Lists.getInstance().getFailed().returnArrayList());
 		_testedWordsSet.addAll(Lists.getInstance().getFaulted().returnArrayList());
 		_testedWordsSet.addAll(Lists.getInstance().getMastered().returnArrayList());
 		addComponentsToPane();
 	}
+	//Adds title, table, and return button to the pane
 	private void addComponentsToPane(){
 		GUI.getInstance().getContentPane().setVisible(false);
 		Container pane = GUI.getInstance().getContentPane();
@@ -49,6 +51,7 @@ public class ViewStats {
         pane.add(_stats, BorderLayout.CENTER);
         GUI.getInstance().getContentPane().setVisible(true);
 	}
+	//Sets up stats so that we can use the default table model for our JTable
 	private JTable table(){
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridheight = 1;

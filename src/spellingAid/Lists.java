@@ -13,12 +13,11 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 
 public class Lists {
-	public static final String WORDLIST = "wordlist";
 	public static final String MASTERED = ".mastered";
 	public static final String FAULTED = ".faulted";
 	public static final String FAILED = ".failed";
 	public static final String LAST_FAILED = ".lastFailed";
-	private WordList _wordList;
+	private WordList _wordList = null;
 	private WordList _mastered;
 	private WordList _faulted;
 	private WordList _failed;
@@ -26,8 +25,8 @@ public class Lists {
 	private static Lists _thisList = null;
 
 	private Lists(){
+		//Reads in all the statistics storing lists if they already  exist
 		_thisList = this;
-		_wordList = readInFile(WORDLIST);
 		_mastered = readInFile(MASTERED);
 		_faulted = readInFile(FAULTED);
 		_failed = readInFile(FAILED);
@@ -43,7 +42,7 @@ public class Lists {
 	private WordList readInFile(String filename){
 		WordList words = new WordList();
 		File wordList = new File(filename);
-		if(wordList.exists() || filename.equals(WORDLIST)){
+		if(wordList.exists()){
 			try{
 				BufferedReader wordListRead = new BufferedReader(new FileReader(wordList));
 				String word;
@@ -63,6 +62,29 @@ public class Lists {
 			}
 		}
 		return words;
+	}
+	//Reads in the wordlist file specified by the user
+	protected void setWordList(File file){
+		_wordList = new WordList();
+		if(file.exists()){
+			try{
+				BufferedReader wordListRead = new BufferedReader(new FileReader(file));
+				String word;
+				while((word = wordListRead.readLine()) != null){
+					if((word.equals("") == false && (word.equals("\\s+") == false))){
+						_wordList.addWord(word);
+					}
+				}
+				wordListRead.close();	
+				Collections.sort(_wordList.returnArrayList(), String.CASE_INSENSITIVE_ORDER);
+
+			} catch (FileNotFoundException e){
+				JOptionPane.showMessageDialog(null, "Error: unable to load " + file.getName() + ".");
+
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, "Error: unable to read from word list " + file.getName() + ".");
+			}
+		}
 	}
 
 	public WordList getWordList(){

@@ -13,7 +13,6 @@ public class WelcomeScreen implements ActionListener{
 
 	//GridBagLayout structure from Oracle https://docs.oracle.com/javase/tutorial/displayCode.html?code=https://docs.oracle.com/javase/tutorial/uiswing/examples/layout/GridBagLayoutDemoProject/src/layout/GridBagLayoutDemo.java
 
-
 	final static boolean shouldFill = true;
 	final static boolean shouldWeightX = true;
 	final static Dimension BUTTON_DIMENSIONS = new Dimension(250,40);
@@ -48,14 +47,6 @@ public class WelcomeScreen implements ActionListener{
 		c.gridy = y;
 		GUI.getInstance().getContentPane().add(button, c);
 	}
-
-
-	/**
-	 * Create the GUI and show it.  For thread safety,
-	 * this method should be invoked from the
-	 * event-dispatching thread.
-	 */
-
 
 	private void welcomeMessage(GridBagConstraints c){
 		c.ipadx = 50;
@@ -94,10 +85,15 @@ public class WelcomeScreen implements ActionListener{
 		setButtonConstraints(_clearStats, c, 1, 3);
 	}
 
+	//Menu listener- new action option object created depending on the option pressed
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if((JButton)event.getSource() == _newQuiz){
-			new NewQuiz(Lists.getInstance().getWordList(), "New Quiz");
+			if(Lists.getInstance().getWordList() == null || Lists.getInstance().getWordList().length() == 0){
+				JOptionPane.showMessageDialog(null, "Error: no words for New Quiz loaded. Please restart application and load a file of the correct format.", "New Quiz", JOptionPane.ERROR_MESSAGE);
+			} else{
+				new Review(Lists.getInstance().getWordList(), "New Quiz");
+			}
 		} else if (event.getSource() == _review){
 			if(Lists.getInstance().getLastFailed().length() == 0){
 				JOptionPane.showMessageDialog(null, "There are no words available to review. Please try starting a new quiz.", "Review", JOptionPane.ERROR_MESSAGE);
